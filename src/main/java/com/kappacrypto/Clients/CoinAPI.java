@@ -47,8 +47,7 @@ public class CoinAPI {
         // TODO: check content is gzip
         String unzippedRes = StreamUtils.convertGzipResponseToString(responseStream.body());
 
-        List<Crypto> crpytoList = objectMapper.readValue(unzippedRes, new TypeReference<>() {});
-        return crpytoList;
+        return objectMapper.readValue(unzippedRes, new TypeReference<>() {});
     }
 
     private void getAssetIcons(Crypto c) throws URISyntaxException, IOException, InterruptedException {
@@ -61,7 +60,7 @@ public class CoinAPI {
         handleResponse(res);
     }
 
-    private HttpResponse<InputStream> requestAssets() throws IOException, InterruptedException {
+    private HttpResponse<InputStream> requestAssets() throws IOException, InterruptedException, URISyntaxException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(baseUrl + assetUrl))
                 .header("X-CoinAPI-Key", privateKey)
@@ -71,9 +70,4 @@ public class CoinAPI {
         return client.send(request, HttpResponse.BodyHandlers.ofInputStream());
     }
 
-    // get all current coin abbreviations
-
-    // get current price of coins
-
-    // get new coin list
 }

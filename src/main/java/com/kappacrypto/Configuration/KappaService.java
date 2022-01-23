@@ -6,6 +6,7 @@ import com.kappacrypto.Clients.CoinAPI;
 import com.kappacrypto.Clients.Twitter;
 import com.kappacrypto.Models.Crypto;
 import com.kappacrypto.utils.StreamUtils;
+import com.kappacrypto.utils.TwitterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,22 +30,18 @@ public class KappaService {
     List<Crypto> cryptoAssets;
 
     @PostConstruct
-    public void fireUpService() throws URISyntaxException, IOException, InterruptedException {
+    public void fireUpService() throws URISyntaxException, InterruptedException {
         // Ensure coin api client has pullied most up to date coin data
         try {
             cryptoAssets = coinAPI.getAssets();
+            String nameRule = TwitterUtils.createRuleFromAssetName(cryptoAssets);
+            twitterClient.createStreamRules(nameRule, "assetNames");
         } catch (IOException e) {
             log.error("Unable to get assets from CoinAPI:\n" + e);
         }
-
-//        List<String> cryptoAccounts;
-//        try {
-//            cryptoAccounts = getCryptoAccounts();
-//        } catch (Exception e) {
-//            log.error("Unable to load account names from resouce dir", e);
-//        }
     }
 
+    // Option to load hard coded account names from resources
     private List<String> getCryptoAccounts() throws IOException {
         InputStream accountNamesStream = getClass().getClassLoader().getResourceAsStream("Twitter/CryptoAccounts.json");
         String content = StreamUtils.convertBufferToString(accountNamesStream);

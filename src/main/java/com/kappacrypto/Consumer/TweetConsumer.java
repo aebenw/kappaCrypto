@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 public class TweetConsumer implements Consumer<Tweet> {
     @Override
     public void accept(Tweet tweet) {
-
+        System.out.println("Tweet: " + tweet);
     }
 
     @Override
