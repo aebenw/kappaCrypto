@@ -8,9 +8,17 @@ public class TwitterUtils {
 
     public static String createRuleFromAssetName(List<Crypto> assets) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
+        int len = 5;
+        for (int i = 0; i < len; i++) {
             Crypto curr = assets.get(i);
-            sb.append(curr.assetId + " OR " + curr.name + " ");
+
+            sb.append(curr.assetId + " OR ");
+            if (curr.name.indexOf(" ") != -1) {
+                sb.append("\"" + curr.name + "\"");
+            } else {
+                sb.append(curr.name);
+            }
+            if (i < len - 1) sb.append(" OR ");
         }
 
         return sb.toString();

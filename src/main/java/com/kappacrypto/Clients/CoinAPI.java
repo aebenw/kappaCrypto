@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kappacrypto.Models.Crypto;
 import com.kappacrypto.utils.StreamUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 @Component
+@Slf4j
 public class CoinAPI {
 
     HttpClient client;
@@ -43,11 +45,13 @@ public class CoinAPI {
     }
 
     private List<Crypto> handleResponse(HttpResponse<InputStream> responseStream) throws IOException {
-        System.out.println(responseStream.body());
         // TODO: check content is gzip
         String unzippedRes = StreamUtils.convertGzipResponseToString(responseStream.body());
 
-        return objectMapper.readValue(unzippedRes, new TypeReference<>() {});
+        log.info("unzippedRes:\n " + unzippedRes);
+        TypeReference<List<Crypto>> tr = new TypeReference<List<Crypto>>() {};
+        List<Crypto> assets = objectMapper.readValue(unzippedRes, tr);
+        return assets;
     }
 
     private void getAssetIcons(Crypto c) throws URISyntaxException, IOException, InterruptedException {

@@ -31,11 +31,13 @@ public class KappaService {
 
     @PostConstruct
     public void fireUpService() throws URISyntaxException, InterruptedException {
-        // Ensure coin api client has pullied most up to date coin data
+        // Ensure coin api client has pulled most up to date coin data
+//            twitterClient.getStreamRules();
         try {
             cryptoAssets = coinAPI.getAssets();
             String nameRule = TwitterUtils.createRuleFromAssetName(cryptoAssets);
             twitterClient.createStreamRules(nameRule, "assetNames");
+            twitterClient.streamTweets();
         } catch (IOException e) {
             log.error("Unable to get assets from CoinAPI:\n" + e);
         }
