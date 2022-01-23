@@ -5,20 +5,20 @@ import com.kappacrypto.Consumer.TweetConsumer;
 import io.github.redouane59.twitter.TwitterClient;
 import io.github.redouane59.twitter.dto.user.UserV2;
 import io.github.redouane59.twitter.signature.TwitterCredentials;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
-@Setter
 @Slf4j
 public class Twitter {
-    @Value("client.twitter.publickey")
+    @Value("${client.twitter.publickey}")
     private String publicKey;
-    @Value("client.twitter.privatekey")
+    @Value("${client.twitter.privatekey}")
     private String privateKey;
+    @Value("${client.twitter.bearer.token}")
+    private String bearerToken;
 
     private TwitterClient client;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -27,13 +27,11 @@ public class Twitter {
 
     public Twitter() {
         TwitterCredentials credentials = TwitterCredentials.builder()
-                .apiKey("NDXoF8Dh9BkVGkMjK1P9uRRoe")
-                .apiSecretKey("1e52QYIGD7pgkRTkBAsJeExTqjcUV2p9ZoUZFW5JJeGnAybuxx")
-                .bearerToken("AAAAAAAAAAAAAAAAAAAAAEbpXgEAAAAAeXhSEgWJFIs9rZVBpiO4wYqc5YI%3DbUlUgMo804gy02mwA1K2ieRKB5D8a4cuMbDpGiByIB8uhJZzNi")
+                .apiKey(publicKey)
+                .apiSecretKey(privateKey)
+                .bearerToken(bearerToken)
                 .build();
         client = new TwitterClient(credentials);
-
-
     }
 
     public void getStreamRules() {
@@ -45,8 +43,8 @@ public class Twitter {
 //        client.deleteFilteredStreamRuleId();
 //    }
 
-    public void createStreamRules() {
-        client.addFilteredStreamRule("from:AltcoinDailyio", "cryptoUser");
+    public void createStreamRules(String rule, String tag) {
+        client.addFilteredStreamRule(rule, tag);
     }
 
     // Query for both abreviations and full names
@@ -61,7 +59,6 @@ public class Twitter {
 
     public void streamTweets() {
         client.startFilteredStream(new TweetConsumer());
-//        client.startSampledStream()
     }
 // Create List of accounts from json array
 
