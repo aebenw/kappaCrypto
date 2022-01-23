@@ -3,21 +3,20 @@ package com.kappacrypto.Clients;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kappacrypto.Consumer.TweetConsumer;
 import io.github.redouane59.twitter.TwitterClient;
-import io.github.redouane59.twitter.dto.user.UserV2;
+import io.github.redouane59.twitter.dto.stream.StreamRules;
 import io.github.redouane59.twitter.signature.TwitterCredentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Slf4j
+@Component
 public class Twitter {
-    @Value("${client.twitter.publickey}")
+
     private String publicKey;
-    @Value("${client.twitter.privatekey}")
     private String privateKey;
-    @Value("${client.twitter.bearer.token}")
     private String bearerToken;
 
     private TwitterClient client;
@@ -25,7 +24,15 @@ public class Twitter {
     private List<String> cryptoAccounts;
 
 
-    public Twitter() {
+    public Twitter(
+            @Value("${client.twitter.publickey}") String publicKey,
+            @Value("${client.twitter.privatekey}") String privateKey,
+            @Value("${client.twitter.bearer.token}") String bearerToken
+    ) {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
+        this.bearerToken = bearerToken;
+
         TwitterCredentials credentials = TwitterCredentials.builder()
                 .apiKey(publicKey)
                 .apiSecretKey(privateKey)
@@ -35,7 +42,8 @@ public class Twitter {
     }
 
     public void getStreamRules() {
-        client.retrieveFilteredStreamRules();
+        List<StreamRules.StreamRule> streamRules = client.retrieveFilteredStreamRules();
+        System.out.println(streamRules);
     }
 
 //    public void deletetreamRules() {
@@ -44,18 +52,10 @@ public class Twitter {
 //    }
 
     public void createStreamRules(String rule, String tag) {
-        client.addFilteredStreamRule(rule, tag);
+        //TODO: Add check to see if rule exists via tag or matching strings
+        StreamRules.StreamRule streamRule = client.addFilteredStreamRule(rule, tag);
+        System.out.println(streamRule);
     }
-
-    // Query for both abreviations and full names
-        // hashtags and tweets themselves
-    @Scheduled(fixedRate=1000)
-    public void getTweets(String userName) {
-        UserV2 user = client.getUserFromUserName(userName);
-        System.out.println("user: " + user);
-    }
-
-
 
     public void streamTweets() {
         client.startFilteredStream(new TweetConsumer());
