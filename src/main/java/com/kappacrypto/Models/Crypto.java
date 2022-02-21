@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
 public class Crypto {
+    public String name;
     @JsonProperty ("asset_id")
     public String assetId;
 
@@ -41,13 +42,15 @@ public class Crypto {
 //    @JsonProperty ("data_symbols_count")
 //    public int datasSmbolsCount;
 //
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
-//    @JsonProperty ("volume_1day_usd")
-//    public int volume1DayUsd;
-//
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
-//    @JsonProperty ("volume_1mth_usd")
-//    public int volume1MthUsd;
+
+    @JsonProperty ("volume_1day_usd")
+    public Long volume1DayUsd;
+
+    @JsonProperty ("volume_1mth_usd")
+    public Long volume1MthUsd;
+
+    @JsonProperty ("volume_1hrs_usd")
+    public Long volume1HrUsd;
 
     @JsonProperty ("price_usd")
     public int priceUsd;
@@ -63,11 +66,17 @@ public class Crypto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public Date dataEnd;
 
-    public String name;
     public String iconUrl;
 
     public void setAssetIcon(String iconUrl) {
         // TODO: Set Icon Url
         this.iconUrl = iconUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + this.name
+                + "\nAsset Id: " + this.assetId
+                + "\n1 day vol: " + this.volume1DayUsd;
     }
 }

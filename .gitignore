@@ -23,11 +23,15 @@ proguard/
 *.ipr
 *.iws
 .idea/
+.idea/*
+.idea/**/*
 out/
 
 #Gradle
 .gradletasknamecache
 .gradle/
+.gradle/**/*
+.gradle/*
 build/
 bin/
 test-output/
