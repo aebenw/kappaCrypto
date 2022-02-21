@@ -6,7 +6,6 @@ import com.kappacrypto.Clients.CoinAPI;
 import com.kappacrypto.Clients.Twitter;
 import com.kappacrypto.Models.Crypto;
 import com.kappacrypto.utils.StreamUtils;
-import com.kappacrypto.utils.TwitterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,16 +26,14 @@ public class KappaService {
     @Autowired private Twitter twitterClient;
     @Autowired private ObjectMapper objectMapper;
 
-    List<Crypto> cryptoAssets;
-
     @PostConstruct
     public void fireUpService() throws URISyntaxException, InterruptedException {
         // Ensure coin api client has pulled most up to date coin data
-//            twitterClient.getStreamRules();
         try {
-            cryptoAssets = coinAPI.getAssets();
-            String nameRule = TwitterUtils.createRuleFromAssetName(cryptoAssets);
-            twitterClient.createStreamRules(nameRule, "assetNames");
+//            twitterClient.deleteAllStreamRules();
+            List<Crypto> cryptoAssets = coinAPI.topAssetsByDayTradingVolume();
+
+            twitterClient.createRuleFromCrypto(cryptoAssets, "topres");
             twitterClient.streamTweets();
         } catch (IOException e) {
             log.error("Unable to get assets from CoinAPI:\n" + e);
